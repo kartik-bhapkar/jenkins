@@ -4,6 +4,11 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
+     stage('Pull') {
+            steps {
+                git branch: 'main', url: 'https://github.com/kartik-bhapkar/student-app-full-deployment.git'
+            }
+        }
         stage('Build') {
             steps {
                 echo 'build success'

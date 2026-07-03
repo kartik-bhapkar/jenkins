@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    stages {
+        stage('PULL') {
+            steps {
+                git branch: 'devops', url: 'https://github.com/jambhulkarcloudblitz-alt/CDEC-studentapp.git'
+            }
+        }
+        stage('BUILD') {
+            steps {
+                sh '''cd backend
+                    mvn clean package -DskipTests'''
+            }
+        }
+        //  stage('TEST') {
+        //      steps {
+        //          sh '''cd backend
+        //            mvn sonar:sonar \
+        //              -Dsonar.projectKey=jenkins \
+        //              -Dsonar.projectName='jenkins' \
+        //              -Dsonar.host.url=http://13.203.77.64:9000 \
+        //              -Dsonar.token=sqp_602a225ce9282b9d3bb5306973f675f0c8982970'''
+        //      }
+        //  }
+
+         stage('TEST') {
+             steps {
+                withSonarQubeEnv(installationName: 'sonarqube',credentialsId: 'sonar-cred') { 
+                     sh '''cd backend
+                       mvn sonar:sonar \
+                         -Dsonar.projectKey=jenkins'''
+                }
+             }
+         }
+        stage ('Quality-Gate') {
+            steps {
+                timeout(10) {
+                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-cred'
+                }
+        }
+        }
+        stage ('Delivery') {
+            steps {
+                sh 'aws s3 cp backend/target/student-registration-backend-0.0.1-SNAPSHOT.jar s3://kartik007-363/studentapp.jar'
+            }
+        }
+
+        stage('DEPLOY') {
+            steps {
+                echo 'DEPLOY SUCCSESS'
+            }
+        }
+    }
+}

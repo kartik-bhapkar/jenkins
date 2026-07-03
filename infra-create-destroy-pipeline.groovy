@@ -12,13 +12,14 @@ pipeline{
     stages{
         stage("PULL"){
             steps{
-                git branch: 'main', url: 'https://github.com/abhiharde07/eks-infra.git'
+                git branch: 'master', url: 'https://github.com/kartik-bhapkar/jenkins.git'
             }
         }
 
         stage("TERRAFORM-INIT"){
             steps{
-                 sh 'terraform init'
+                 sh '''cd eks-cluster
+                    terraform init'''
             }
         }
 
@@ -26,9 +27,11 @@ pipeline{
             steps {
                 script {
                     if (params.ACTION == "apply") {
-                        sh 'terraform plan'
+                        sh '''cd eks-cluster
+                            terraform plan'''
                     } else {
-                        sh 'terraform plan -destroy'
+                        sh '''cd eks-cluster
+                            terraform plan -destroy'''
                     }
                 }
             }
@@ -47,9 +50,10 @@ pipeline{
             steps{
                 script {
                     if (params.ACTION == "apply") {
-                        sh 'terraform apply -auto-approve'
+                        sh '''cd eks-cluster 
+                            terraform apply -auto-approve'''
                     }else{
-                        sh 'terraform destroy -auto-approve'
+                        sh ''' cd eks-cluster terraform destroy -auto-approve'''
                     }
                 }
             }

@@ -22,7 +22,8 @@ pipeline {
         }
         stage ('APPLY') {
             steps {
-                sh 'terraform apply --auto-approve'
+                sh ''' cd eks-cluster
+                    terraform apply --auto-approve'''
             }
         }
     }

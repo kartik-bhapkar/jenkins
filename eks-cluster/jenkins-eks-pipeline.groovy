@@ -8,7 +8,8 @@ pipeline {
         }
         stage ('PLAN') {
             steps {
-                sh ''' terraform init
+                sh ''' cd eks-cluster
+                    terraform init
                     terraform plan '''
            }
         }

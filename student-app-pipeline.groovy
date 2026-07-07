@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    stages {
+        stage('PULL') {
+            steps {
+                git branch: 'main', url: 'https://github.com/kartik-bhapkar/student-app-deployment-and-monitoring.git'
+            }
+        }
+        stage('DATABASE') {
+            steps {
+                sh '''cd yaml
+                    terraform apply -f .'''
+            }
+        }
+
+        stage('BACKEND') {
+            steps {
+                sh '''cd backend/yaml
+                    terraform apply -f .'''
+            }
+        }
+
+        stage('FRONTEND') {
+            steps {
+                sh '''cd yaml
+                    terraform apply -f .'''
+            }
+        }
+         stage('TEST') {
+             steps {
+                withSonarQubeEnv(installationName: 'sonarqube',credentialsId: 'sonar-cred') { 
+                     sh '''cd backend
+                       mvn sonar:sonar \
+                         -Dsonar.projectKey=jenkins'''
+                }
+             }
+         }
+        stage ('Quality-Gate') {
+            steps {
+                timeout(10) {
+                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-cred'
+                }
+        }
+        }
+        stage ('Delivery') {
+            steps {
+                sh 'aws s3 cp backend/target/student-registration-backend-0.0.1-SNAPSHOT.jar s3://kartik007-363/studentapp.jar'
+            }
+        }
+
+        stage('DEPLOY') {
+            steps {
+                echo 'DEPLOY SUCCSESS'
+            }
+        }
+    }
+}

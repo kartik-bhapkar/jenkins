@@ -22,7 +22,7 @@ pipeline {
 
         stage('FRONTEND') {
             steps {
-                sh '''cd yaml
+                sh '''cd frontend/yaml
                     kubectl apply -f .'''
             }
         }

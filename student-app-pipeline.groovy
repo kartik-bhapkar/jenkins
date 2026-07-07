@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('PULL') {
             steps {
-                git branch: 'main', url: 'https://github.com/kartik-bhapkar/student-app-deployment-and-monitoring.git'
+                git branch: 'master', url: 'https://github.com/kartik-bhapkar/student-app-deployment-and-monitoring.git'
             }
         }
         stage('DATABASE') {

@@ -9,21 +9,21 @@ pipeline {
         stage('DATABASE') {
             steps {
                 sh '''cd yaml
-                    terraform apply -f .'''
+                    kubectl apply -f .'''
             }
         }
 
         stage('BACKEND') {
             steps {
                 sh '''cd backend/yaml
-                    terraform apply -f .'''
+                    kubectl apply -f .'''
             }
         }
 
         stage('FRONTEND') {
             steps {
                 sh '''cd yaml
-                    terraform apply -f .'''
+                    kubectl apply -f .'''
             }
         }
          stage('TEST') {

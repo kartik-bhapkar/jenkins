@@ -39,7 +39,7 @@ data "aws_subnets" "default" {
 }
 
 resource "aws_eks_cluster" "example" {
-  name = "example"
+  name = "k-cluster"
 
   access_config {
     authentication_mode = "API"

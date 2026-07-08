@@ -16,7 +16,7 @@ pipeline {
         stage('BACKEND') {
             steps {
                 sh '''cd backend/yaml
-                    kubectl apply -f svc.yml,hpa.yml,deploy.yml '''
+                    kubectl apply -f .'''
             }
         }
 

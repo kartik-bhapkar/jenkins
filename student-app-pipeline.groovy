@@ -16,17 +16,18 @@ pipeline {
         stage('BACKEND') {
             steps {
                 sh '''cd backend/yaml
-                    kubectl apply -f .'''
+                    kubectl apply -f . '''
             }
         }
 
-        stage('FRONTEND') {
+        stage('BACKEND-BUILD') {
             steps {
-                sh '''cd frontend/yaml
-                    kubectl apply -f .'''
+                sh '''cd backend
+                    mvn clean package -DskipTests'''
             }
         }
-         stage('TEST') {
+
+        stage('BACKEND-TEST') {
              steps {
                 withSonarQubeEnv(installationName: 'sonarqube',credentialsId: 'sonar-cred') { 
                      sh '''cd backend
@@ -35,6 +36,36 @@ pipeline {
                 }
              }
          }
+
+        stage('FRONTEND') {
+            steps {
+                sh '''cd frontend/yaml
+                    kubectl apply -f .'''
+            }
+        }
+
+        stage('FRONTEND-BUILD') {
+            steps {
+                sh '''cd frontend
+                    npm run build'''
+            }
+        }
+        
+        stage('FRONTEND-TEST') {
+            steps {
+                script {
+                    def scannerHome = tool 'sonarscanner'
+
+                    withSonarQubeEnv(installationName: 'sonarscanner', credentialsId: 'sscanner-cred') {
+                        sh """
+                            cd frontend
+                            ${scannerHome}/bin/sonar-scanner
+                        """
+                    }
+                }
+            }
+        }
+
         stage ('Quality-Gate') {
             steps {
                 timeout(10) {

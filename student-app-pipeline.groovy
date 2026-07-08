@@ -57,12 +57,12 @@ pipeline {
                 script {
                     def scannerHome = tool 'sonarscanner'
 
-                    withSonarQubeEnv(installationName: 'sonarscanner', credentialsId: 'sscanner-cred') {
+                    withSonarQubeEnv('sonarqube') {
                         sh """
                             cd frontend
-                            ${scannerHome}/bin/sonar-scanner 
+                            ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=student-app-frontend \
-                                -Dsonar.sources=. \
+                                -Dsonar.sources=src
                         """
                     }
                 }

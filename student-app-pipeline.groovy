@@ -76,7 +76,13 @@ pipeline {
                 }
         }
         }
-        stage ('Delivery') {
+        stage ('Frontend-Delivery') {
+            steps {
+                sh 'aws s3 cp frontend/dist s3://kartik007-363/studentapp-frontend/'
+            }
+        }
+
+        stage ('Backend-Delivery') {
             steps {
                 sh 'aws s3 cp backend/target/student-registration-backend-0.0.1-SNAPSHOT.jar s3://kartik007-363/studentapp.jar'
             }

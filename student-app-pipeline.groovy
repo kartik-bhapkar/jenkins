@@ -60,7 +60,10 @@ pipeline {
                     withSonarQubeEnv(installationName: 'sonarscanner', credentialsId: 'sscanner-cred') {
                         sh """
                             cd frontend
-                            ${scannerHome}/bin/sonar-scanner """
+                            ${scannerHome}/bin/sonar-scanner 
+                                -Dsonar.projectKey=student-app-frontend \
+                                -Dsonar.sources=. \
+                        """
                     }
                 }
             }

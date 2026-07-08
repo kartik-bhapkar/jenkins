@@ -59,8 +59,7 @@ pipeline {
                     withSonarQubeEnv(installationName: 'sonarscanner', credentialsId: 'sscanner-cred') {
                         sh """
                             cd frontend
-                            ${scannerHome}/bin/sonar-scanner
-                        """
+                            ${scannerHome}/bin/sonar-scanner """
                     }
                 }
             }
